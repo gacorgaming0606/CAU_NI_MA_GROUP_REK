@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>  
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cek Rekening Online</title>
+  <style>
+    body { font-family: Arial; padding:40px; background:#f9f9f9; text-align:center; }
+    input, button { padding:10px; font-size:16px; margin:10px; }
+    #hasil { margin-top:20px; white-space:pre-wrap; font-family:monospace; }
+  </style>
+</head>
+<body>
+  <h1>Cek Nomor Rekening</h1>
+  <input id="rekening" placeholder="Masukkan nomor rekening">
+  <button onclick="cekRekening()">Cek</button>
+  <div id="hasil"></div>
+
+  <script>
+    async function cekRekening() {
+      const no = document.getElementById('rekening').value.trim();
+      const r = document.getElementById('hasil');
+      r.innerText = 'Memproses...';
+      if (!no) { r.innerText = '⚠️ Masukkan nomor rekening!'; return; }
+      try {
+        const resp = await fetch(`https://api.rezalr.my.id/cek-rekening?no=${encodeURIComponent(no)}`);
+        const d = await resp.json();
+        if (d.status === 'success') {
+          r.innerText = `✅ Nama: ${d.nama}\n🏦 Bank: ${d.bank}\n📄 Status: ${d.status}`;
+        } else {
+          r.innerText = `❌ Gagal: ${d.message || 'Tidak ditemukan'}`;
+        }
+      } catch {
+        r.innerText = '❌ Error koneksi API.';
+      }
+    }
+  </script>
+</body>
+</html>
